@@ -56,7 +56,7 @@ def translate_ts(source, lang):
 					tr_tag = message.find('translation')
 					tr_tag.set('type', 'finished')
 					tr_tag.text = translation
-		tree.write(get_output_filename(source, lang), 'UTF-8')
+		tree.write(source, 'UTF-8')
 		print "[INFO] done."
 	except ET.ParseError as err:
 		print "[ERROR] Unable to parse input file", source
