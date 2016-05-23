@@ -113,19 +113,19 @@ def get_output_filename(source, lang):
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description='Translate a .ts file using .xlsx from Google Drive')
 	parser.add_argument('source', type=str, help='source TS/TXT file, to be modified/translated')
-	parser.add_argument('translations', type=str, help='xlsx containing translations')
-	parser.add_argument('language', type=str, help='target output language')
+	parser.add_argument('-excel', type=str, required=True, help='xlsx containing translations')
+	parser.add_argument('-lang', type=str, required=True, help='target output language')
 	args = parser.parse_args()
 	if not os.path.isfile(args.source) or not get_file_extension(args.source) in ['txt', 'ts']:
 		print "[ERROR] You must input a valid source file with extension ts or txt"
 		sys.exit()
-	if get_file_extension(args.translations) != "xlsx":
+	if get_file_extension(args.excel) != "xlsx":
 		print "[ERROR] You must input a valid translations file with extension xlsx"
 		sys.exit()
 	
 	global translations
-	translations = openBook(args.translations)
+	translations = openBook(args.excel)
 	if get_file_extension(args.source) == 'txt':
-		translate_txt(args.source, args.language)
+		translate_txt(args.source, args.lang)
 	if get_file_extension(args.source) == 'ts':
-		translate_ts(args.source, args.language)
+		translate_ts(args.source, args.lang)
