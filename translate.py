@@ -1,9 +1,8 @@
 import os
 import argparse
 import sys
-import math
 import xml.etree.ElementTree as ET
-import xlwt, xlrd
+import xlrd
 
 global translations
 
@@ -40,30 +39,32 @@ def get_column_index(language, sheet):
 # =========================
 # operations on TS file
 # =========================
-def loadQtTS(tsfile):
-	print "[INFO] Loading TS input file", tsfile
+def translate_ts(source, lang):
+	print "[INFO] Loading TS input file", source
 	try:
-		pages = list()
-		tree = ET.parse(tsfile)
+		tree = ET.parse(source)
 		for context in tree.iter('context'):
 			# for each context
-			page = None
-			for el in context:
-				if el.tag == 'name':
-					page = XLSPage(el.text)
-				elif el.tag == 'message':
-					page.add_source_string(el.find('source').text)
-			loadedpages.append(page)
+			name = context.find('name').text
+			sheet = openSheetName(name)
+			col = get_column_index(lang, sheet)
+			for message in context.iter('message'):
+				original = message.find('source').text
+				translation = getTranslation(original, sheet, col)
+				if len(translation) > 0:
+					#import pdb; pdb.set_trace()
+					tr_tag = message.find('translation')
+					tr_tag.set('type', 'finished')
+					tr_tag.text = translation
+		tree.write(get_output_filename(source, lang), 'UTF-8')
+		print "[INFO] done."
 	except ET.ParseError as err:
-		print "[ERROR] Unable to parse input file", tsfile
+		print "[ERROR] Unable to parse input file", source
 		sys.exit()
 	except IOError:
-		print "[ERROR] File", tsfile, "unavailable"
+		print "[ERROR] File", source, "unavailable"
 		sys.exit()
 	
-def translate_ts(source):
-	pass
-
 
 
 # =========================
