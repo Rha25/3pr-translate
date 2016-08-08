@@ -6,6 +6,8 @@ import xlrd
 
 global translations
 
+utf_delta='\u0394'
+
 # =========================
 # operations on EXCEL file
 # =========================
@@ -31,7 +33,7 @@ def get_column_index(language, sheet):
 		s = str(sheet.cell_value(0, col))
 		if s.lower() == language.lower():
 			return col
-	print "[ERROR] missing language %s in translation file"%language
+	print "[ERROR] missing language %s in translation file, page: %s"%(language, sheet.name)
 	return -1
 
 
@@ -51,8 +53,8 @@ def translate_ts(source, lang):
 			for message in context.iter('message'):
 				original = message.find('source').text
 				translation = getTranslation(original, sheet, col)
+				#import pdb; pdb.set_trace()
 				if len(translation) > 0:
-					#import pdb; pdb.set_trace()
 					tr_tag = message.find('translation')
 					tr_tag.set('type', 'finished')
 					tr_tag.text = translation
